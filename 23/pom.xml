@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uy.jumapico</groupId>
+    <artifactId>mojarra-bug-ui-debug</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>Mojarra bug ui:debug</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <!-- plugins dependencies versions -->
+        <version.fmt-maven-plugin>2.18</version.fmt-maven-plugin>
+        <version.maven-enforcer-plugin>3.0.0</version.maven-enforcer-plugin>
+        <version.maven-war-plugin>3.3.2</version.maven-war-plugin>
+        <version.reproducible-build-maven-plugin>0.15</version.reproducible-build-maven-plugin>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>8.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- use a recent version; old versions fail with jdk 17 -->
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${version.maven-war-plugin}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- enforce jdk and maven versions -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${version.maven-enforcer-plugin}</version>
+                <configuration>
+                    <rules>
+                        <requireMavenVersion>
+                            <version>3.8</version>
+                        </requireMavenVersion>
+                        <requireJavaVersion>
+                            <version>17</version>
+                        </requireJavaVersion>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- make a reproducible artifact -->
+            <!-- https://reproducible-builds.org/ -->
+            <!-- https://zlika.github.io/reproducible-build-maven-plugin/ -->
+            <plugin>
+                <groupId>io.github.zlika</groupId>
+                <artifactId>reproducible-build-maven-plugin</artifactId>
+                <version>${version.reproducible-build-maven-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>strip-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>strip-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- reformat code following the java google standard -->
+            <!-- https://google.github.io/styleguide/javaguide.html -->
+            <plugin>
+                <groupId>com.spotify.fmt</groupId>
+                <artifactId>fmt-maven-plugin</artifactId>
+                <version>${version.fmt-maven-plugin}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
